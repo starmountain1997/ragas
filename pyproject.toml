@@ -1,0 +1,30 @@
+[project]
+name = "ragas"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "agno>=3.2.1",
+    "numpy>=2.5.5",
+    "openai>=3.59.0",
+    "tqdm>=4.70.1",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

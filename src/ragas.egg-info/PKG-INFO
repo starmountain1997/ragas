@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: ragas
+Version: 0.1.0
+Requires-Python: >=3.13
+Requires-Dist: agno>=3.2.1
+Requires-Dist: numpy>=2.5.5
+Requires-Dist: openai>=3.59.0
+Requires-Dist: tqdm>=4.70.1
