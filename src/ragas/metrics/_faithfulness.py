@@ -1,5 +1,3 @@
-import typing as t
-
 import numpy as np
 from pydantic import BaseModel, Field
 
@@ -13,7 +11,7 @@ class StatementGeneratorInput(BaseModel):
 
 
 class StatementGeneratorOutput(BaseModel):
-    statements: t.List[str] = Field(description="The generated statements")
+    statements: list[str] = Field(description="The generated statements")
 
 
 STATEMENT_GENERATOR_INSTRUCTION = (
@@ -35,11 +33,15 @@ STATEMENT_GENERATOR_EXAMPLES = [
         StatementGeneratorOutput(
             statements=[
                 "Albert Einstein was a German-born theoretical physicist.",
-                "Albert Einstein is recognized as one of the greatest and most "
-                "influential physicists of all time.",
+                (
+                    "Albert Einstein is recognized as one of the greatest and most "
+                    "influential physicists of all time."
+                ),
                 "Albert Einstein was best known for developing the theory of relativity.",
-                "Albert Einstein also made important contributions to the development "
-                "of the theory of quantum mechanics.",
+                (
+                    "Albert Einstein also made important contributions to the development "
+                    "of the theory of quantum mechanics."
+                ),
             ]
         ),
     )
@@ -48,7 +50,7 @@ STATEMENT_GENERATOR_EXAMPLES = [
 
 class NLIStatementInput(BaseModel):
     context: str = Field(..., description="The context of the question")
-    statements: t.List[str] = Field(..., description="The statements to judge")
+    statements: list[str] = Field(..., description="The statements to judge")
 
 
 class StatementFaithfulnessAnswer(BaseModel):
@@ -58,7 +60,7 @@ class StatementFaithfulnessAnswer(BaseModel):
 
 
 class NLIStatementOutput(BaseModel):
-    statements: t.List[StatementFaithfulnessAnswer]
+    statements: list[StatementFaithfulnessAnswer]
 
 
 NLI_INSTRUCTION = (
@@ -155,9 +157,7 @@ class Faithfulness(Metric):
         contexts_str = "\n".join(sample.retrieved_contexts or [])
         verdicts = await self.llm.generate(
             NLI_INSTRUCTION,
-            NLIStatementInput(
-                context=contexts_str, statements=statements.statements
-            ),
+            NLIStatementInput(context=contexts_str, statements=statements.statements),
             NLIStatementOutput,
             NLI_EXAMPLES,
         )

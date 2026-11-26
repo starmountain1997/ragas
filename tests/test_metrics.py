@@ -49,7 +49,11 @@ def test_faithfulness():
             ),
             "NLIStatementOutput": NLIStatementOutput(
                 statements=[
-                    {"statement": "Einstein was born in Germany.", "verdict": 1, "reason": ""},
+                    {
+                        "statement": "Einstein was born in Germany.",
+                        "verdict": 1,
+                        "reason": "",
+                    },
                     {"statement": "Einstein liked music.", "verdict": 0, "reason": ""},
                 ]
             ),
@@ -107,9 +111,7 @@ def test_context_precision():
         }
     )
     m = ContextPrecision(llm=llm)
-    s = SingleTurnSample(
-        user_input="q", reference="a", retrieved_contexts=["c1", "c2"]
-    )
+    s = SingleTurnSample(user_input="q", reference="a", retrieved_contexts=["c1", "c2"])
     score = __import__("asyncio").run(m.single_turn_ascore(s))
     # both verdicts 1 -> AP = 1.0
     assert score == pytest.approx(1.0)
@@ -155,11 +157,11 @@ def test_answer_relevancy_noncommittal_zero():
 
 
 def test_evaluate_dataset():
+    from ragas.evaluation import evaluate
     from ragas.metrics._faithfulness import (
         NLIStatementOutput,
         StatementGeneratorOutput,
     )
-    from ragas.evaluation import evaluate
 
     llm = FakeLLM(
         {

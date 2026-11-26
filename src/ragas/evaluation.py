@@ -6,15 +6,15 @@ import typing as t
 import numpy as np
 from tqdm.auto import tqdm
 
-from ragas.schema import EvaluationDataset, EvaluationResult
 from ragas.metrics.base import Metric
+from ragas.schema import EvaluationDataset, EvaluationResult
 
 
 async def aevaluate(
     dataset: EvaluationDataset,
     metrics: t.Sequence[Metric],
-    llm: t.Optional[t.Any] = None,
-    embeddings: t.Optional[t.Any] = None,
+    llm: t.Any | None = None,
+    embeddings: t.Any | None = None,
     show_progress: bool = True,
 ) -> EvaluationResult:
     """Score every sample with every metric, concurrently, and aggregate."""
@@ -29,12 +29,10 @@ async def aevaluate(
     async def score_one(metric: Metric, sample) -> float:
         try:
             return await metric.single_turn_ascore(sample)
-        except Exception:
+        except Exception:  # noqa: BLE001 — 单样本失败记 NaN，不阻断整轮评估
             return np.nan
 
-    tasks = [
-        [score_one(metric, sample) for metric in metrics] for sample in dataset
-    ]
+    tasks = [[score_one(metric, sample) for metric in metrics] for sample in dataset]
     pbar = tqdm(total=len(tasks) * len(metrics), disable=not show_progress)
 
     async def track(coro):
@@ -48,7 +46,7 @@ async def aevaluate(
     pbar.close()
 
     names = [m.name for m in metrics]
-    scores_per_row = [dict(zip(names, row)) for row in results]
+    scores_per_row = [dict(zip(names, row, strict=True)) for row in results]
     means = {}
     for name in names:
         vals = [row[name] for row in scores_per_row]
@@ -60,10 +58,16 @@ async def aevaluate(
 def evaluate(
     dataset: EvaluationDataset,
     metrics: t.Sequence[Metric],
-    llm: t.Optional[t.Any] = None,
-    embeddings: t.Optional[t.Any] = None,
+    llm: t.Any | None = None,
+    embeddings: t.Any | None = None,
     show_progress: bool = True,
 ) -> EvaluationResult:
     return asyncio.run(
-        aevaluate(dataset, metrics, llm=llm, embeddings=embeddings, show_progress=show_progress)
+        aevaluate(
+            dataset,
+            metrics,
+            llm=llm,
+            embeddings=embeddings,
+            show_progress=show_progress,
+        )
     )

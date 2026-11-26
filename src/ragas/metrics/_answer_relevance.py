@@ -1,7 +1,5 @@
-import typing as t
-
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from ragas.metrics.base import Metric
 from ragas.schema import SingleTurnSample
@@ -19,14 +17,16 @@ class ResponseRelevanceOutput(BaseModel):
 INSTRUCTION = (
     "Generate a question for the given answer and Identify if answer is "
     "noncommittal. Give noncommittal as 1 if the answer is noncommittal and 0 if "
-    'the answer is committal. A noncommittal answer is one that is evasive, vague, '
+    "the answer is committal. A noncommittal answer is one that is evasive, vague, "
     'or ambiguous. For example, "I don\'t know" or "I\'m not sure" are noncommittal '
     "answers"
 )
 EXAMPLES = [
     (
         ResponseRelevanceInput(response="Albert Einstein was born in Germany."),
-        ResponseRelevanceOutput(question="Where was Albert Einstein born?", noncommittal=0),
+        ResponseRelevanceOutput(
+            question="Where was Albert Einstein born?", noncommittal=0
+        ),
     ),
     (
         ResponseRelevanceInput(
@@ -84,9 +84,9 @@ class ResponseRelevancy(Metric):
         question_vec = np.asarray(
             self.embeddings.embed_query(sample.user_input)
         ).reshape(1, -1)
-        gen_vec = np.asarray(
-            self.embeddings.embed_documents(gen_questions)
-        ).reshape(len(gen_questions), -1)
+        gen_vec = np.asarray(self.embeddings.embed_documents(gen_questions)).reshape(
+            len(gen_questions), -1
+        )
         norm = np.linalg.norm(gen_vec, axis=1) * np.linalg.norm(question_vec)
         cosine = np.dot(gen_vec, question_vec.T).reshape(-1) / norm
         return float(cosine.mean())

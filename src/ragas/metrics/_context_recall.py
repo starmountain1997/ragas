@@ -1,7 +1,5 @@
-import typing as t
-
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from ragas.metrics.base import Metric
 from ragas.schema import SingleTurnSample
@@ -20,7 +18,7 @@ class ContextRecallClassification(BaseModel):
 
 
 class ContextRecallClassifications(BaseModel):
-    classifications: t.List[ContextRecallClassification]
+    classifications: list[ContextRecallClassification]
 
 
 INSTRUCTION = (

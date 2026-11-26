@@ -15,8 +15,8 @@ class StructuredLLM:
         self,
         instruction: str,
         input_data: BaseModel,
-        output_schema: t.Type[BaseModel],
-        examples: t.Sequence[t.Tuple[BaseModel, BaseModel]] = (),
+        output_schema: type[BaseModel],
+        examples: t.Sequence[tuple[BaseModel, BaseModel]] = (),
     ) -> BaseModel:
         # local import: tests inject fakes without agno installed deps
         from agno.agent import Agent
@@ -30,5 +30,7 @@ class StructuredLLM:
             )
             prompt += "\n\n" + rendered
         agent = Agent(model=self.model, output_schema=output_schema)
-        response = await agent.arun(prompt + "\n\nInput:\n" + input_data.model_dump_json())
+        response = await agent.arun(
+            prompt + "\n\nInput:\n" + input_data.model_dump_json()
+        )
         return response.content

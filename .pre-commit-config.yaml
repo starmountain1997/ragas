@@ -1,0 +1,17 @@
+# 提交前检查：python 侧 ruff（格式 + lint，含 isort）。纯 python 仓，
+# 无 web/shell/Dockerfile，故只有这一组钩子；entry 走 uv run，读
+# pyproject.toml 的 [tool.ruff] 配置（line-length=88，target py313）。
+# 装钩子（一次性）：uvx pre-commit install。
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format --check
+        language: system
+        types: [python]
+      - id: ruff-lint
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]

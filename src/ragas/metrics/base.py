@@ -1,6 +1,5 @@
 """Metric base class."""
 
-import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -12,9 +11,9 @@ from ragas.schema import SingleTurnSample
 @dataclass
 class Metric(ABC):
     name: str
-    required_columns: t.Set[str]
-    llm: t.Optional[StructuredLLM] = None
-    embeddings: t.Optional[Embeddings] = None
+    required_columns: set[str]
+    llm: StructuredLLM | None = None
+    embeddings: Embeddings | None = None
 
     @abstractmethod
     async def single_turn_ascore(self, sample: SingleTurnSample) -> float:

@@ -1,6 +1,3 @@
-import typing as t
-
-import numpy as np
 from pydantic import BaseModel, Field
 
 from ragas.metrics.base import Metric

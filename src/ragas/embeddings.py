@@ -8,9 +8,9 @@ import numpy as np
 class Embeddings:
     """Duck-typed interface: embed_query / embed_documents."""
 
-    def embed_query(self, text: str) -> t.List[float]: ...
+    def embed_query(self, text: str) -> list[float]: ...
 
-    def embed_documents(self, texts: t.List[str]) -> t.List[t.List[float]]: ...
+    def embed_documents(self, texts: list[str]) -> list[list[float]]: ...
 
 
 class OpenAIEmbeddings(Embeddings):
@@ -21,10 +21,10 @@ class OpenAIEmbeddings(Embeddings):
 
         self._embedder = OpenAIEmbedder(id=id, **kwargs)
 
-    def embed_query(self, text: str) -> t.List[float]:
+    def embed_query(self, text: str) -> list[float]:
         return self._embedder.get_embedding(text)
 
-    def embed_documents(self, texts: t.List[str]) -> t.List[t.List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         return [self._embedder.get_embedding(t) for t in texts]
 
 
