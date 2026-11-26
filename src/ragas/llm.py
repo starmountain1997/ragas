@@ -4,6 +4,8 @@ import typing as t
 
 from pydantic import BaseModel
 
+OutputT = t.TypeVar("OutputT", bound=BaseModel)
+
 
 class StructuredLLM:
     """Wraps an agno Model; generate() returns a parsed pydantic instance."""
@@ -15,9 +17,9 @@ class StructuredLLM:
         self,
         instruction: str,
         input_data: BaseModel,
-        output_schema: type[BaseModel],
+        output_schema: type[OutputT],
         examples: t.Sequence[tuple[BaseModel, BaseModel]] = (),
-    ) -> BaseModel:
+    ) -> OutputT:
         # local import: tests inject fakes without agno installed deps
         from agno.agent import Agent
 
@@ -33,4 +35,7 @@ class StructuredLLM:
         response = await agent.arun(
             prompt + "\n\nInput:\n" + input_data.model_dump_json()
         )
+        content = response.content
+        assert isinstance(content, output_schema), "agno returned unexpected content"
+        return content
         return response.content

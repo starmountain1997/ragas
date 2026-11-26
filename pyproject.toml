@@ -11,9 +11,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "import-linter>=2.17",
+    "pip-audit>=2.10.1",
     "pytest>=9.2.0",
     "pytest-asyncio>=1.5.0",
     "ruff>=0.17.6",
+    "ty>=0.0.111",
 ]
 
 [[tool.uv.index]]
@@ -50,3 +53,20 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["INP001"]
+
+[tool.ty.src]
+include = ["src", "tests"]
+
+[tool.importlinter]
+root_packages = ["ragas"]
+
+[[tool.importlinter.contracts]]
+name = "evaluation → metrics → llm/embeddings → schema 分层"
+type = "layers"
+# import-linter 约定：列表前面的层更高（可 import 后面的层，反向禁止）
+layers = [
+    "ragas.evaluation",
+    "ragas.metrics",
+    "ragas.llm | ragas.embeddings",
+    "ragas.schema",
+]

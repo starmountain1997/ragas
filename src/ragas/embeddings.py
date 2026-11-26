@@ -8,9 +8,11 @@ import numpy as np
 class Embeddings:
     """Duck-typed interface: embed_query / embed_documents."""
 
-    def embed_query(self, text: str) -> list[float]: ...
+    def embed_query(self, text: str) -> list[float]:
+        raise NotImplementedError
 
-    def embed_documents(self, texts: list[str]) -> list[list[float]]: ...
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        raise NotImplementedError
 
 
 class OpenAIEmbeddings(Embeddings):

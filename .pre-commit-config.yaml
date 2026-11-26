@@ -1,6 +1,7 @@
-# 提交前检查：python 侧 ruff（格式 + lint，含 isort）。纯 python 仓，
-# 无 web/shell/Dockerfile，故只有这一组钩子；entry 走 uv run，读
-# pyproject.toml 的 [tool.ruff] 配置（line-length=88，target py313）。
+# 提交前检查：python 侧 ruff（格式 + lint，含 isort）+ import-linter 分层契约。
+# 纯 python 仓，无 web/shell/Dockerfile，故只有这一组钩子；entry 走 uv run，
+# 读 pyproject.toml 的 [tool.ruff] / [tool.importlinter] 配置。
+# 手动跑：uv run ty check（类型）、uv run pip-audit（依赖漏洞，走网络，不进钩子）。
 # 装钩子（一次性）：uvx pre-commit install。
 repos:
   - repo: local
@@ -15,3 +16,9 @@ repos:
         entry: uv run ruff check --fix
         language: system
         types: [python]
+      - id: import-linter
+        name: import-linter 分层契约
+        entry: uv run lint-imports
+        language: system
+        types: [python]
+        pass_filenames: false
